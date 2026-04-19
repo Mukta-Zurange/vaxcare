@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VaxCare — Vaccination Booking Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:      #0D9488;
+    --teal-lt:   #CCFBF1;
+    --teal-dk:   #0A7566;
+    --mint:      #F0FDF9;
+    --coral:     #F97316;
+    --coral-lt:  #FFF7ED;
+    --navy:      #0F172A;
+    --slate:     #475569;
+    --slate-lt:  #94A3B8;
+    --border:    #E2E8F0;
+    --white:     #FFFFFF;
+    --success:   #16A34A;
+    --danger:    #DC2626;
+    --warn:      #D97706;
+    --card-shadow: 0 4px 24px rgba(15,23,42,.08);
+    --radius:    14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--mint);
+    color: var(--navy);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─────────────────────────────── */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .header-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 64px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem; color: var(--teal);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 36px; height: 36px; background: var(--teal);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 18px;
+  }
+  nav { display: flex; gap: 4px; }
+  .nav-btn {
+    padding: 6px 16px; border-radius: 8px; border: none;
+    background: transparent; font-family: inherit; font-size: .875rem;
+    font-weight: 500; color: var(--slate); cursor: pointer;
+    transition: all .2s;
+  }
+  .nav-btn:hover { background: var(--mint); color: var(--teal); }
+  .nav-btn.active { background: var(--teal-lt); color: var(--teal); }
+  .header-cta {
+    background: var(--teal); color: white; padding: 8px 20px;
+    border-radius: 8px; border: none; font-family: inherit;
+    font-size: .875rem; font-weight: 600; cursor: pointer;
+    transition: background .2s;
+  }
+  .header-cta:hover { background: var(--teal-dk); }
+
+  /* ─── PAGES ───────────────────────────────── */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── HERO ────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, #0D9488 0%, #0A7566 50%, #065F52 100%);
+    padding: 72px 24px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -80px; left: 10%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(249,115,22,.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+    border-radius: 100px; padding: 5px 14px;
+    font-size: .75rem; font-weight: 600; color: rgba(255,255,255,.9);
+    letter-spacing: .05em; text-transform: uppercase; margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: white; line-height: 1.15;
+    max-width: 640px; margin-bottom: 20px;
+  }
+  .hero h1 em { font-style: italic; color: #A7F3D0; }
+  .hero p {
+    font-size: 1.05rem; color: rgba(255,255,255,.8);
+    max-width: 520px; line-height: 1.7; margin-bottom: 36px;
+  }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary {
+    background: white; color: var(--teal);
+    padding: 12px 28px; border-radius: 10px; border: none;
+    font-family: inherit; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,.2); }
+  .btn-outline {
+    background: transparent; color: white;
+    padding: 12px 28px; border-radius: 10px;
+    border: 2px solid rgba(255,255,255,.5);
+    font-family: inherit; font-size: 1rem; font-weight: 500;
+    cursor: pointer; transition: border-color .2s, background .2s;
+  }
+  .btn-outline:hover { border-color: white; background: rgba(255,255,255,.1); }
+  .hero-stats {
+    display: flex; gap: 40px; margin-top: 56px; flex-wrap: wrap;
+  }
+  .hero-stat { color: white; }
+  .hero-stat .num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; display: block;
+  }
+  .hero-stat .lbl { font-size: .8rem; color: rgba(255,255,255,.65); text-transform: uppercase; letter-spacing: .05em; }
+
+  /* ─── SECTION COMMON ──────────────────────── */
+  .section { padding: 64px 24px; max-width: 1200px; margin: 0 auto; }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem; color: var(--navy); margin-bottom: 8px;
+  }
+  .section-sub { color: var(--slate); font-size: .95rem; margin-bottom: 40px; }
+
+  /* ─── CARDS GRID ──────────────────────────── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: white; border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 24px; box-shadow: var(--card-shadow);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(15,23,42,.12); }
+
+  /* ─── VACCINE CARDS ───────────────────────── */
+  .vax-card {
+    background: white; border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden; box-shadow: var(--card-shadow);
+    transition: transform .2s, box-shadow .2s; cursor: pointer;
+  }
+  .vax-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(15,23,42,.12); }
+  .vax-card-top {
+    height: 8px;
+  }
+  .vax-card-body { padding: 20px; }
+  .vax-icon { font-size: 28px; margin-bottom: 12px; }
+  .vax-name { font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; }
+  .vax-desc { font-size: .83rem; color: var(--slate); line-height: 1.5; margin-bottom: 14px; }
+  .vax-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tag {
+    padding: 3px 10px; border-radius: 100px;
+    font-size: .72rem; font-weight: 600; letter-spacing: .03em;
+  }
+  .tag-teal { background: var(--teal-lt); color: var(--teal-dk); }
+  .tag-coral { background: #FFF7ED; color: #C2410C; }
+  .tag-slate { background: #F1F5F9; color: var(--slate); }
+  .vax-price { font-size: .85rem; color: var(--slate-lt); margin-bottom: 16px; }
+  .vax-price strong { color: var(--navy); font-size: 1.1rem; }
+  .btn-book {
+    width: 100%; padding: 10px; background: var(--teal);
+    color: white; border: none; border-radius: 8px;
+    font-family: inherit; font-size: .875rem; font-weight: 600;
+    cursor: pointer; transition: background .2s;
+  }
+  .btn-book:hover { background: var(--teal-dk); }
+
+  /* ─── BOOKING FORM ────────────────────────── */
+  .booking-container {
+    display: grid; grid-template-columns: 1fr 380px; gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .booking-container { grid-template-columns: 1fr; } }
+
+  .form-card {
+    background: white; border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 32px;
+    box-shadow: var(--card-shadow);
+  }
+  .form-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem; margin-bottom: 24px; color: var(--navy);
+  }
+  .steps-nav {
+    display: flex; gap: 0; margin-bottom: 32px;
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  }
+  .step-tab {
+    flex: 1; padding: 10px 4px; border: none; background: white;
+    font-family: inherit; font-size: .8rem; font-weight: 500;
+    color: var(--slate-lt); cursor: pointer; position: relative;
+    transition: all .2s;
+  }
+  .step-tab.done { color: var(--teal); background: var(--teal-lt); }
+  .step-tab.active { color: white; background: var(--teal); }
+  .step-tab:not(:last-child) { border-right: 1px solid var(--border); }
+  .step-num {
+    display: block; font-size: 1rem; font-weight: 700; margin-bottom: 2px;
+  }
+
+  .form-step { display: none; }
+  .form-step.active { display: block; animation: fadeIn .25s ease; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block; font-size: .83rem; font-weight: 600;
+    color: var(--navy); margin-bottom: 6px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%; padding: 10px 14px; border-radius: 8px;
+    border: 1.5px solid var(--border); font-family: inherit;
+    font-size: .9rem; color: var(--navy); background: white;
+    transition: border-color .2s, box-shadow .2s; outline: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(13,148,136,.12);
+  }
+  .form-group input.error,
+  .form-group select.error { border-color: var(--danger); }
+  .err-msg { font-size: .75rem; color: var(--danger); margin-top: 4px; display: none; }
+  .err-msg.show { display: block; }
+
+  .time-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px;
+  }
+  .time-slot {
+    padding: 9px 4px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: white; font-family: inherit; font-size: .8rem;
+    font-weight: 500; color: var(--slate); cursor: pointer;
+    text-align: center; transition: all .2s;
+  }
+  .time-slot:hover { border-color: var(--teal); color: var(--teal); }
+  .time-slot.selected { background: var(--teal); border-color: var(--teal); color: white; }
+  .time-slot.unavailable { opacity: .4; cursor: not-allowed; background: #F8FAFC; }
+
+  .center-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
+  }
+  .center-option {
+    padding: 14px; border-radius: 10px; border: 1.5px solid var(--border);
+    cursor: pointer; transition: all .2s;
+  }
+  .center-option:hover { border-color: var(--teal); }
+  .center-option.selected { border-color: var(--teal); background: var(--teal-lt); }
+  .center-option .c-name { font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+  .center-option .c-addr { font-size: .78rem; color: var(--slate); }
+  .center-option .c-dist { font-size: .75rem; color: var(--teal); font-weight: 600; margin-top: 6px; }
+
+  .form-nav { display: flex; gap: 12px; margin-top: 8px; }
+  .btn-next, .btn-prev {
+    padding: 11px 28px; border-radius: 8px; border: none;
+    font-family: inherit; font-size: .9rem; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-next { background: var(--teal); color: white; flex: 1; }
+  .btn-next:hover { background: var(--teal-dk); }
+  .btn-prev { background: #F1F5F9; color: var(--slate); }
+  .btn-prev:hover { background: var(--border); }
+  .btn-submit {
+    width: 100%; padding: 13px; background: var(--teal); color: white;
+    border: none; border-radius: 8px; font-family: inherit;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    transition: background .2s; margin-top: 8px;
+  }
+  .btn-submit:hover { background: var(--teal-dk); }
+
+  /* ─── BOOKING SIDEBAR ─────────────────────── */
+  .booking-sidebar { position: sticky; top: 80px; }
+  .summary-card {
+    background: white; border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 24px;
+    box-shadow: var(--card-shadow);
+  }
+  .summary-title { font-weight: 700; margin-bottom: 16px; font-size: 1rem; }
+  .summary-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    font-size: .85rem;
+  }
+  .summary-row:last-of-type { border-bottom: none; }
+  .summary-row .s-label { color: var(--slate); min-width: 90px; font-size: .8rem; }
+  .summary-row .s-val { color: var(--navy); font-weight: 500; }
+  .summary-row .s-icon { font-size: 16px; margin-top: 1px; }
+
+  .info-box {
+    background: var(--teal-lt); border-radius: 10px;
+    border: 1px solid rgba(13,148,136,.2);
+    padding: 14px 16px; margin-top: 16px;
+  }
+  .info-box h4 { font-size: .83rem; font-weight: 700; color: var(--teal-dk); margin-bottom: 8px; }
+  .info-box ul { padding-left: 16px; }
+  .info-box li { font-size: .78rem; color: var(--teal-dk); margin-bottom: 4px; line-height: 1.5; }
+
+  /* ─── MY BOOKINGS ─────────────────────────── */
+  .bookings-empty {
+    text-align: center; padding: 80px 24px;
+  }
+  .bookings-empty .empty-icon { font-size: 56px; margin-bottom: 16px; }
+  .bookings-empty h3 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin-bottom: 8px; }
+  .bookings-empty p { color: var(--slate); font-size: .9rem; }
+
+  .booking-item {
+    background: white; border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 20px 24px;
+    box-shadow: var(--card-shadow); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+  }
+  .bk-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .bk-info { flex: 1; min-width: 160px; }
+  .bk-name { font-weight: 700; font-size: 1rem; }
+  .bk-center { font-size: .83rem; color: var(--slate); margin-top: 2px; }
+  .bk-datetime { font-size: .83rem; color: var(--slate-lt); margin-top: 2px; }
+  .bk-status {
+    padding: 4px 12px; border-radius: 100px;
+    font-size: .75rem; font-weight: 700; letter-spacing: .04em;
+  }
+  .status-confirmed { background: #DCFCE7; color: #15803D; }
+  .status-pending   { background: #FEF3C7; color: #92400E; }
+  .status-completed { background: #F1F5F9; color: #475569; }
+  .bk-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    padding: 7px 14px; border-radius: 7px; border: 1.5px solid var(--border);
+    background: white; font-family: inherit; font-size: .78rem; font-weight: 600;
+    color: var(--slate); cursor: pointer; transition: all .2s;
+  }
+  .btn-sm:hover { border-color: var(--teal); color: var(--teal); }
+  .btn-sm.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ─── SUCCESS MODAL ───────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,.5); backdrop-filter: blur(4px);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    padding: 24px; opacity: 0; pointer-events: none;
+    transition: opacity .3s;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal {
+    background: white; border-radius: 20px;
+    padding: 40px; max-width: 480px; width: 100%;
+    text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,.2);
+    transform: translateY(20px); transition: transform .3s;
+  }
+  .modal-overlay.show .modal { transform: translateY(0); }
+  .success-circle {
+    width: 80px; height: 80px; background: #DCFCE7;
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 36px; margin: 0 auto 20px;
+  }
+  .modal h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem; margin-bottom: 10px;
+  }
+  .modal p { color: var(--slate); font-size: .9rem; line-height: 1.6; margin-bottom: 24px; }
+  .ref-box {
+    background: var(--mint); border: 1.5px dashed var(--teal);
+    border-radius: 10px; padding: 12px 20px; margin-bottom: 24px;
+    font-size: .85rem; color: var(--slate);
+  }
+  .ref-box strong { color: var(--teal-dk); font-size: 1.05rem; display: block; }
+  .btn-modal {
+    width: 100%; padding: 12px; background: var(--teal); color: white;
+    border: none; border-radius: 10px; font-family: inherit;
+    font-size: .95rem; font-weight: 700; cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-modal:hover { background: var(--teal-dk); }
+
+  /* ─── DASHBOARD ───────────────────────────── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px; margin-bottom: 40px;
+  }
+  .stat-card {
+    background: white; border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 20px 24px;
+    box-shadow: var(--card-shadow);
+  }
+  .stat-card .s-icon { font-size: 24px; margin-bottom: 10px; }
+  .stat-card .s-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; color: var(--navy);
+  }
+  .stat-card .s-lbl { font-size: .8rem; color: var(--slate); margin-top: 2px; }
+
+  /* ─── ALERT ────────────────────────────────── */
+  .alert {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 18px; border-radius: 10px; margin-bottom: 16px;
+    font-size: .875rem;
+  }
+  .alert-info { background: var(--teal-lt); border: 1px solid rgba(13,148,136,.2); color: var(--teal-dk); }
+  .alert-warn { background: #FEF3C7; border: 1px solid #FDE68A; color: #92400E; }
+
+  /* ─── VACCINE DETAIL (MODAL) ─────────────── */
+  .vax-modal-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .vax-modal-icon { font-size: 40px; }
+  .vax-modal-header h2 { font-family: 'DM Serif Display', serif; font-size: 1.6rem; }
+
+  /* ─── FOOTER ──────────────────────────────── */
+  footer {
+    background: var(--navy); color: rgba(255,255,255,.5);
+    padding: 40px 24px; margin-top: 48px;
+    text-align: center; font-size: .8rem;
+  }
+  footer strong { color: rgba(255,255,255,.8); }
+
+  /* ─── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 640px) {
+    .form-row { grid-template-columns: 1fr; }
+    .time-grid { grid-template-columns: repeat(3, 1fr); }
+    .center-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 24px; }
+    .booking-item { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#" onclick="navigate('home')">
+      <div class="logo-icon">💉</div>
+      VaxCare
+    </a>
+    <nav>
+      <button class="nav-btn active" id="nav-home" onclick="navigate('home')">Home</button>
+      <button class="nav-btn" id="nav-vaccines" onclick="navigate('vaccines')">Vaccines</button>
+      <button class="nav-btn" id="nav-book" onclick="navigate('book')">Book</button>
+      <button class="nav-btn" id="nav-bookings" onclick="navigate('bookings')">My Bookings</button>
+    </nav>
+    <button class="header-cta" onclick="navigate('book')">Book Now →</button>
+  </div>
+</header>
+
+<!-- ═══════ HOME PAGE ═══════ -->
+<div class="page active" id="page-home">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">🛡️ Trusted Healthcare Platform</div>
+      <h1>Your Health,<br><em>Protected</em> & Scheduled</h1>
+      <p>Book vaccination appointments at certified centers near you — fast, easy, and safe. No more waiting in queues.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="navigate('book')">Schedule a Vaccination</button>
+        <button class="btn-outline" onclick="navigate('vaccines')">Explore Vaccines</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="num">50K+</span><span class="lbl">Doses Administered</span></div>
+        <div class="hero-stat"><span class="num">120+</span><span class="lbl">Certified Centers</span></div>
+        <div class="hero-stat"><span class="num">30+</span><span class="lbl">Vaccines Available</span></div>
+        <div class="hero-stat"><span class="num">4.9★</span><span class="lbl">Patient Rating</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    
+
+    <p class="section-title">How It Works</p>
+    <p class="section-sub">Get vaccinated in 3 simple steps</p>
+    <div class="cards-grid">
+      <div class="card">
+        <div style="font-size:32px;margin-bottom:12px">🔍</div>
+        <h3 style="font-weight:700;margin-bottom:8px">Choose Vaccine</h3>
+        <p style="font-size:.875rem;color:var(--slate);line-height:1.6">Browse our catalogue of 30+ vaccines recommended by WHO & national health bodies.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:32px;margin-bottom:12px">📅</div>
+        <h3 style="font-weight:700;margin-bottom:8px">Pick a Slot</h3>
+        <p style="font-size:.875rem;color:var(--slate);line-height:1.6">Select your nearest certified center and a convenient date & time that works for you.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:32px;margin-bottom:12px">✅</div>
+        <h3 style="font-weight:700;margin-bottom:8px">Get Vaccinated</h3>
+        <p style="font-size:.875rem;color:var(--slate);line-height:1.6">Arrive with your confirmation ID. Receive your dose from certified medical professionals.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════ VACCINES PAGE ═══════ -->
+<div class="page" id="page-vaccines">
+  <div class="section">
+    <p class="section-title">Vaccine Catalogue</p>
+    <p class="section-sub">Click any vaccine to book an appointment</p>
+    <div class="cards-grid" id="vaccines-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════ BOOK PAGE ═══════ -->
+<div class="page" id="page-book">
+  <div class="section">
+    <p class="section-title">Book an Appointment</p>
+    <p class="section-sub">Fill in the details below to schedule your vaccination</p>
+
+    <div class="booking-container">
+      <!-- FORM -->
+      <div class="form-card">
+        <div class="steps-nav">
+          <button class="step-tab active" id="stab-1"><span class="step-num">1</span>Patient</button>
+          <button class="step-tab" id="stab-2"><span class="step-num">2</span>Vaccine</button>
+          <button class="step-tab" id="stab-3"><span class="step-num">3</span>Schedule</button>
+          <button class="step-tab" id="stab-4"><span class="step-num">4</span>Review</button>
+        </div>
+
+        <!-- STEP 1 -->
+        <div class="form-step active" id="step-1">
+          <h3 class="form-title">Patient Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" id="fname" placeholder="Riya" oninput="syncSummary()">
+              <div class="err-msg" id="err-fname">First name is required.</div>
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" id="lname" placeholder="Sharma" oninput="syncSummary()">
+              <div class="err-msg" id="err-lname">Last name is required.</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Date of Birth *</label>
+              <input type="date" id="dob">
+              <div class="err-msg" id="err-dob">Date of birth is required.</div>
+            </div>
+            <div class="form-group">
+              <label>Gender *</label>
+              <select id="gender">
+                <option value="">Select…</option>
+                <option>Male</option><option>Female</option><option>Other</option>
+              </select>
+              <div class="err-msg" id="err-gender">Gender is required.</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Mobile Number *</label>
+              <input type="tel" id="phone" placeholder="+91 9876543210" oninput="syncSummary()">
+              <div class="err-msg" id="err-phone">Valid phone is required.</div>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="email" placeholder="riya@example.com">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Aadhaar / ID Number *</label>
+            <input type="text" id="aadhaar" placeholder="XXXX XXXX XXXX">
+            <div class="err-msg" id="err-aadhaar">ID number is required.</div>
+          </div>
+          <div class="form-nav">
+            <button class="btn-next" onclick="goStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="form-step" id="step-2">
+          <h3 class="form-title">Select Vaccine</h3>
+          <div class="form-group">
+            <label>Vaccine Category</label>
+            <select id="vax-cat" onchange="filterVaxSelect()">
+              <option value="">All categories</option>
+              <option>COVID-19</option>
+              <option>Influenza</option>
+              <option>Pediatric</option>
+              <option>Travel</option>
+              <option>Adult</option>
+            </select>
+          </div>
+          <div id="vax-select-grid" class="center-grid" style="grid-template-columns:1fr;gap:10px;"></div>
+          <div class="err-msg show" id="err-vax" style="margin-top:8px;display:none;">Please select a vaccine.</div>
+          <div class="form-nav">
+            <button class="btn-prev" onclick="goStep(1)">← Back</button>
+            <button class="btn-next" onclick="goStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="form-step" id="step-3">
+          <h3 class="form-title">Choose Center & Slot</h3>
+          <div class="form-group">
+            <label>Vaccination Center *</label>
+            <div class="center-grid" id="center-grid"></div>
+            <div class="err-msg" id="err-center">Please select a center.</div>
+          </div>
+          <div class="form-group">
+            <label>Preferred Date *</label>
+            <input type="date" id="appt-date" onchange="loadSlots()" min="">
+            <div class="err-msg" id="err-date">Please select a date.</div>
+          </div>
+          <div class="form-group">
+            <label>Available Slots</label>
+            <div class="time-grid" id="time-grid">
+              <div style="color:var(--slate-lt);font-size:.8rem;grid-column:span 4">Select a date to see available slots.</div>
+            </div>
+            <div class="err-msg" id="err-slot">Please select a time slot.</div>
+          </div>
+          <div class="form-nav">
+            <button class="btn-prev" onclick="goStep(2)">← Back</button>
+            <button class="btn-next" onclick="goStep(4)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="form-step" id="step-4">
+          <h3 class="form-title">Review & Confirm</h3>
+          <div id="review-box" style="margin-bottom:20px;"></div>
+          <div class="form-group">
+            <label>Medical Notes / Allergies (optional)</label>
+            <textarea id="notes" rows="3" placeholder="Any known allergies or pre-existing conditions…" style="resize:vertical;"></textarea>
+          </div>
+          <div class="alert alert-warn" style="margin-bottom:16px;">
+            ⚠️ <span>Please arrive 10 minutes before your appointment. Bring a valid photo ID and your booking reference.</span>
+          </div>
+          <div class="form-nav">
+            <button class="btn-prev" onclick="goStep(3)">← Back</button>
+          </div>
+          <button class="btn-submit" onclick="submitBooking()">Confirm Booking ✓</button>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="booking-sidebar">
+        <div class="summary-card">
+          <div class="summary-title">📋 Booking Summary</div>
+          <div class="summary-row">
+            <span class="s-icon">👤</span>
+            <span class="s-label">Patient</span>
+            <span class="s-val" id="sum-name">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="s-icon">💉</span>
+            <span class="s-label">Vaccine</span>
+            <span class="s-val" id="sum-vax">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="s-icon">🏥</span>
+            <span class="s-label">Center</span>
+            <span class="s-val" id="sum-center">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="s-icon">📅</span>
+            <span class="s-label">Date</span>
+            <span class="s-val" id="sum-date">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="s-icon">🕐</span>
+            <span class="s-label">Time</span>
+            <span class="s-val" id="sum-time">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="s-icon">💰</span>
+            <span class="s-label">Fee</span>
+            <span class="s-val" id="sum-fee">—</span>
+          </div>
+        </div>
+        <div class="info-box" style="margin-top:16px;">
+          <h4>📌 What to bring</h4>
+          <ul>
+            <li>Government-issued Photo ID (Aadhaar/PAN)</li>
+            <li>Booking confirmation reference</li>
+            <li>Previous vaccination records (if any)</li>
+            <li>Wear loose clothing for easy access</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MY BOOKINGS PAGE ═══════ -->
+<div class="page" id="page-bookings">
+  <div class="section">
+    <p class="section-title">My Bookings</p>
+    <p class="section-sub">Your upcoming and past vaccination appointments</p>
+    <div id="bookings-list"></div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal">
+    <div class="success-circle">✅</div>
+    <h2>Booking Confirmed!</h2>
+    <p>Your vaccination appointment has been successfully scheduled. You will receive a confirmation SMS shortly.</p>
+    <div class="ref-box">
+      Booking Reference<br>
+      <strong id="booking-ref">VAX-XXXXXX</strong>
+    </div>
+    <button class="btn-modal" onclick="closeModal()">View My Bookings</button>
+  </div>
+</div>
+
+<footer>
+  <strong>VaxCare</strong> — Vaccination Booking Portal &nbsp;·&nbsp; 
+  Built for demonstration purposes &nbsp;·&nbsp; 
+  Data is stored locally in your browser
+</footer>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────────────
+const VACCINES = [
+  { id:'v1', name:'Covishield (AZ)', cat:'COVID-19', icon:'🦠', color:'#0D9488',
+    desc:'Oxford–AstraZeneca COVID-19 vaccine. Adenoviral vector, 2-dose schedule.',
+    doses:2, interval:'8–12 weeks', price:250, tags:['COVID-19','Age 18+','2 Doses'] },
+  { id:'v2', name:'Covaxin', cat:'COVID-19', icon:'🧬', color:'#6366F1',
+    desc:'India-developed whole-virion inactivated COVID-19 vaccine by Bharat Biotech.',
+    doses:2, interval:'4–6 weeks', price:300, tags:['COVID-19','Age 18+','2 Doses'] },
+  { id:'v3', name:'Influenza (Flu)', cat:'Influenza', icon:'🤧', color:'#F97316',
+    desc:'Seasonal influenza vaccine. Recommended annually for all age groups.',
+    doses:1, interval:'Annual', price:350, tags:['Influenza','Annual','Age 6m+'] },
+  { id:'v4', name:'MMR Vaccine', cat:'Pediatric', icon:'👶', color:'#EC4899',
+    desc:'Measles, Mumps & Rubella combined live-attenuated vaccine.',
+    doses:2, interval:'4–6 weeks', price:200, tags:['Pediatric','MMR','Age 12m+'] },
+  { id:'v5', name:'Hepatitis B', cat:'Adult', icon:'🩸', color:'#DC2626',
+    desc:'Protects against Hepatitis B virus infection. 3-dose schedule.',
+    doses:3, interval:'0-1-6 months', price:180, tags:['Hepatitis B','3 Doses','All Ages'] },
+  { id:'v6', name:'Typhoid Vi', cat:'Travel', icon:'✈️', color:'#D97706',
+    desc:'Polysaccharide vaccine against typhoid fever. Ideal for travel to endemic areas.',
+    doses:1, interval:'Every 3 years', price:220, tags:['Typhoid','Travel','Age 2+'] },
+  { id:'v7', name:'HPV (Gardasil)', cat:'Adult', icon:'🌸', color:'#8B5CF6',
+    desc:'Human Papillomavirus vaccine protecting against cervical cancer causing strains.',
+    doses:2, interval:'6 months', price:3200, tags:['HPV','Age 9–45','2 Doses'] },
+  { id:'v8', name:'Pneumococcal PCV', cat:'Adult', icon:'🫁', color:'#0891B2',
+    desc:'Protects against pneumococcal bacteria causing pneumonia, meningitis.',
+    doses:1, interval:'One-time / Booster', price:4200, tags:['Pneumonia','Elderly','Adult'] },
+];
+
+const CENTERS = [
+  { id:'c1', name:'City Health Clinic', addr:'MG Road, Pune - 422001', dist:'1.2 km' },
+  { id:'c2', name:'Apollo Vaccination Hub', addr:'College Road, Pune - 422005', dist:'3.7 km' },
+  { id:'c3', name:'Govt. District Hospital', addr:'Sharanpur, Pune - 422002', dist:'2.1 km' },
+  { id:'c4', name:'LifeCare Medical Centre', addr:'Gangapur Road, Pune - 422013', dist:'5.4 km' },
+];
+
+const SLOTS = ['09:00 AM','09:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM',
+               '02:00 PM','02:30 PM','03:00 PM','03:30 PM','04:00 PM','04:30 PM'];
+
+// ─── API BASE URL ────────────────────────────────────────────────────────────
+// Your Express server runs on port 5000
+const API = 'http://localhost:5000/api/booking';
+
+// State
+let currentStep = 1;
+let selectedVax = null;
+let selectedCenter = null;
+let selectedSlot = null;
+let bookings = [];
+
+// ─── NAVIGATION ────────────────────────────────────────────────────────────
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page)?.classList.add('active');
+  if (page === 'vaccines') renderVaccines();
+  if (page === 'bookings') renderBookings();
+  if (page === 'book') {
+    renderVaxSelectGrid();
+    renderCenters();
+    setMinDate();
+    syncSummary();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── STEP NAVIGATION ────────────────────────────────────────────────────────
+function goStep(n) {
+  if (n > currentStep && !validateStep(currentStep)) return;
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.step-tab').forEach((t, i) => {
+    t.classList.remove('active', 'done');
+    if (i + 1 < n) t.classList.add('done');
+    if (i + 1 === n) t.classList.add('active');
+  });
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+  if (n === 4) buildReview();
+}
+
+function validateStep(n) {
+  let ok = true;
+  const req = (id, errId) => {
+    const el = document.getElementById(id);
+    const val = el.value.trim();
+    const err = document.getElementById(errId);
+    if (!val) { el.classList.add('error'); err.classList.add('show'); ok = false; }
+    else { el.classList.remove('error'); err.classList.remove('show'); }
+  };
+  if (n === 1) {
+    req('fname','err-fname'); req('lname','err-lname');
+    req('dob','err-dob'); req('gender','err-gender');
+    req('phone','err-phone'); req('aadhaar','err-aadhaar');
+  }
+  if (n === 2) {
+    if (!selectedVax) {
+      document.getElementById('err-vax').style.display = 'block'; ok = false;
+    } else { document.getElementById('err-vax').style.display = 'none'; }
+  }
+  if (n === 3) {
+    if (!selectedCenter) { document.getElementById('err-center').classList.add('show'); ok = false; }
+    else { document.getElementById('err-center').classList.remove('show'); }
+    req('appt-date','err-date');
+    if (!selectedSlot) { document.getElementById('err-slot').classList.add('show'); ok = false; }
+    else { document.getElementById('err-slot').classList.remove('show'); }
+  }
+  return ok;
+}
+
+// ─── RENDER VACCINES (catalogue) ───────────────────────────────────────────
+function renderVaccines() {
+  const grid = document.getElementById('vaccines-grid');
+  grid.innerHTML = VACCINES.map(v => `
+    <div class="vax-card" onclick="navigate('book');setTimeout(()=>selectVaxById('${v.id}'),300)">
+      <div class="vax-card-top" style="background:${v.color}"></div>
+      <div class="vax-card-body">
+        <div class="vax-icon">${v.icon}</div>
+        <div class="vax-name">${v.name}</div>
+        <div class="vax-desc">${v.desc}</div>
+        <div class="vax-meta">
+          ${v.tags.map(t=>`<span class="tag tag-teal">${t}</span>`).join('')}
+        </div>
+        <div class="vax-price">Fee: <strong>₹${v.price}</strong></div>
+        <button class="btn-book">Book Now</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── RENDER VAX SELECT (booking form step 2) ───────────────────────────────
+function renderVaxSelectGrid(filter='') {
+  const grid = document.getElementById('vax-select-grid');
+  const list = filter ? VACCINES.filter(v=>v.cat===filter) : VACCINES;
+  grid.innerHTML = list.map(v => `
+    <div class="center-option ${selectedVax?.id===v.id?'selected':''}" onclick="selectVax('${v.id}')">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:22px">${v.icon}</span>
+        <div>
+          <div class="c-name">${v.name}</div>
+          <div class="c-addr">${v.tags.join(' · ')}</div>
+          <div class="c-dist">₹${v.price} · ${v.doses} dose(s)</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterVaxSelect() {
+  const cat = document.getElementById('vax-cat').value;
+  renderVaxSelectGrid(cat);
+}
+
+function selectVax(id) {
+  selectedVax = VACCINES.find(v=>v.id===id);
+  renderVaxSelectGrid(document.getElementById('vax-cat').value);
+  syncSummary();
+}
+
+function selectVaxById(id) {
+  goStep(2);
+  selectVax(id);
+}
+
+// ─── RENDER CENTERS ─────────────────────────────────────────────────────────
+function renderCenters() {
+  document.getElementById('center-grid').innerHTML = CENTERS.map(c => `
+    <div class="center-option ${selectedCenter?.id===c.id?'selected':''}" onclick="selectCenter('${c.id}')">
+      <div class="c-name">🏥 ${c.name}</div>
+      <div class="c-addr">${c.addr}</div>
+      <div class="c-dist">${c.dist} away</div>
+    </div>
+  `).join('');
+}
+
+function selectCenter(id) {
+  selectedCenter = CENTERS.find(c=>c.id===id);
+  renderCenters();
+  document.getElementById('err-center').classList.remove('show');
+  syncSummary();
+}
+
+// ─── SLOTS ──────────────────────────────────────────────────────────────────
+function setMinDate() {
+  const inp = document.getElementById('appt-date');
+  const today = new Date();
+  today.setDate(today.getDate()+1);
+  inp.min = today.toISOString().split('T')[0];
+}
+
+function loadSlots() {
+  selectedSlot = null;
+  const date = document.getElementById('appt-date').value;
+  if (!date) return;
+  // Pseudo-randomly mark some slots unavailable
+  const seed = new Date(date).getDate();
+  const unavail = new Set(SLOTS.filter((_,i) => (i+seed)%5===0));
+  document.getElementById('time-grid').innerHTML = SLOTS.map(s => `
+    <button class="time-slot ${unavail.has(s)?'unavailable':''}" 
+      ${unavail.has(s)?'disabled':''} onclick="selectSlot(this,'${s}')">${s}</button>
+  `).join('');
+  syncSummary();
+}
+
+function selectSlot(el, slot) {
+  document.querySelectorAll('.time-slot').forEach(t=>t.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSlot = slot;
+  document.getElementById('err-slot').classList.remove('show');
+  syncSummary();
+}
+
+// ─── SUMMARY SYNC ───────────────────────────────────────────────────────────
+function syncSummary() {
+  const fn = document.getElementById('fname')?.value.trim() || '';
+  const ln = document.getElementById('lname')?.value.trim() || '';
+  document.getElementById('sum-name').textContent = (fn||ln) ? `${fn} ${ln}`.trim() : '—';
+  document.getElementById('sum-vax').textContent = selectedVax ? selectedVax.name : '—';
+  document.getElementById('sum-center').textContent = selectedCenter ? selectedCenter.name : '—';
+  const dt = document.getElementById('appt-date')?.value;
+  document.getElementById('sum-date').textContent = dt ? new Date(dt).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : '—';
+  document.getElementById('sum-time').textContent = selectedSlot || '—';
+  document.getElementById('sum-fee').textContent = selectedVax ? `₹${selectedVax.price}` : '—';
+}
+
+// ─── BUILD REVIEW ────────────────────────────────────────────────────────────
+function buildReview() {
+  const fname = document.getElementById('fname').value;
+  const lname = document.getElementById('lname').value;
+  const dob   = document.getElementById('dob').value;
+  const phone = document.getElementById('phone').value;
+  const dt    = document.getElementById('appt-date').value;
+  const dateStr = dt ? new Date(dt).toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
+
+  document.getElementById('review-box').innerHTML = `
+    <div style="background:var(--mint);border-radius:10px;padding:20px;border:1px solid var(--border)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><div style="font-size:.75rem;color:var(--slate-lt);margin-bottom:2px">PATIENT</div><div style="font-weight:600">${fname} ${lname}</div></div>
+        <div><div style="font-size:.75rem;color:var(--slate-lt);margin-bottom:2px">MOBILE</div><div style="font-weight:600">${phone}</div></div>
+        <div><div style="font-size:.75rem;color:var(--slate-lt);margin-bottom:2px">VACCINE</div><div style="font-weight:600">${selectedVax?.icon} ${selectedVax?.name}</div></div>
+        <div><div style="font-size:.75rem;color:var(--slate-lt);margin-bottom:2px">FEE</div><div style="font-weight:600;color:var(--teal)">₹${selectedVax?.price}</div></div>
+        <div style="grid-column:span 2"><div style="font-size:.75rem;color:var(--slate-lt);margin-bottom:2px">CENTER</div><div style="font-weight:600">${selectedCenter?.name}</div><div style="font-size:.82rem;color:var(--slate)">${selectedCenter?.addr}</div></div>
+        <div><div style="font-size:.75rem;color:var(--slate-lt);margin-bottom:2px">DATE</div><div style="font-weight:600">${dateStr}</div></div>
+        <div><div style="font-size:.75rem;color:var(--slate-lt);margin-bottom:2px">TIME</div><div style="font-weight:600">${selectedSlot}</div></div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── SUBMIT → POST /api/booking/book ────────────────────────────────────────
+async function submitBooking() {
+  const btn = document.querySelector('.btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  const userId = `${document.getElementById('fname').value.trim()}_${document.getElementById('phone').value.trim()}`;
+  const payload = {
+    userId,
+    vaccine: selectedVax.name,
+    center:  selectedCenter.name,
+    date:    document.getElementById('appt-date').value,
+    time:    selectedSlot
+  };
+
+  try {
+    const res  = await fetch(`${API}/book`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || 'Booking failed');
+
+    // Generate a readable reference from the returned MongoDB _id (last 6 chars)
+    const ref = 'VAX-' + (data._id || data.id || Math.random().toString(36).substr(2,6)).toString().slice(-6).toUpperCase();
+    document.getElementById('booking-ref').textContent = ref;
+    document.getElementById('success-modal').classList.add('show');
+    resetForm();
+  } catch (err) {
+    alert('❌ Error: ' + err.message + '\n\nMake sure your Node.js server is running on port 5000.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Confirm Booking ✓';
+  }
+}
+
+function closeModal() {
+  document.getElementById('success-modal').classList.remove('show');
+  navigate('bookings');
+}
+
+function resetForm() {
+  ['fname','lname','dob','phone','email','aadhaar','appt-date','notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('gender').value = '';
+  selectedVax = null; selectedCenter = null; selectedSlot = null;
+  currentStep = 1;
+  goStep(1);
+  syncSummary();
+}
+
+// ─── RENDER BOOKINGS → GET /api/booking/all ──────────────────────────────────
+async function renderBookings() {
+  const el = document.getElementById('bookings-list');
+  el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--slate-lt)">⏳ Loading bookings…</div>`;
+
+  try {
+    const res  = await fetch(`${API}/all`);
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    bookings = await res.json();
+  } catch (err) {
+    el.innerHTML = `<div class="alert alert-warn">⚠️ Could not load bookings — make sure your Node.js server is running on port 5000.<br><small>${err.message}</small></div>`;
+    return;
+  }
+
+  if (!bookings.length) {
+    el.innerHTML = `
+      <div class="bookings-empty">
+        <div class="empty-icon">📋</div>
+        <h3>No bookings yet</h3>
+        <p>You haven't booked any vaccination appointments yet.<br>
+        <button onclick="navigate('book')" style="color:var(--teal);background:none;border:none;cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:600;margin-top:8px">Book your first appointment →</button></p>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = bookings.map(b => {
+    const dt = b.date ? new Date(b.date).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : '—';
+    // Map vaccine name back to icon/color for display
+    const meta = VACCINES.find(v => v.name === b.vaccine);
+    const icon  = meta?.icon  || '💉';
+    const color = meta?.color || '#0D9488';
+    const ref   = b._id ? 'VAX-' + b._id.toString().slice(-6).toUpperCase() : '—';
+    return `
+    <div class="booking-item" id="bk-${b._id}">
+      <div class="bk-icon" style="background:${color}22">${icon}</div>
+      <div class="bk-info">
+        <div class="bk-name">${b.vaccine || 'Unknown Vaccine'}</div>
+        <div class="bk-center">🏥 ${b.center}</div>
+        <div class="bk-datetime">📅 ${dt} &nbsp;·&nbsp; 🕐 ${b.time} &nbsp;·&nbsp; User: <strong>${b.userId}</strong> &nbsp;·&nbsp; Ref: <strong>${ref}</strong></div>
+      </div>
+      <span class="bk-status status-confirmed">Confirmed</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+navigate('home');
+</script>
+</body>
+</html>
